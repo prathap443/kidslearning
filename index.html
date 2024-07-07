@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Math Quiz</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-image: url('C:/Users/prath/Downloads/grid5.png'); /* Add the path to your image here */
+            background-size: cover; /* Ensure the image covers the entire background */
+            background-position: center; /* Center the image */
+            background-repeat: no-repeat; /* Prevent the image from repeating */
+        }
+
+        .banner {
+            background-color: orange;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .banner img {
+            height: 50px;
+            position: absolute;
+            left: 20px;
+        }
+
+        .banner h1 {
+            margin: 0;
+            color: red;
+            text-align: center;
+        }
+
+        .container {
+            display: flex;
+            margin-top: 20px;
+        }
+
+        .menu {
+            display: flex;
+            flex-direction: column;
+            margin-right: 20px; /* Add some space between the menu and main content */
+        }
+
+        .menu button {
+            padding: 10px 20px;
+            background-color: yellow;
+            color: #000;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-bottom: 10px;
+        }
+
+        .menu button:hover {
+            background-color: #f0c040;
+        }
+
+        #quizContainer {
+            max-height: 600px;
+            overflow-y: auto;
+            border: 1px solid #ccc;
+            padding: 20px;
+            background-color: rgba(255, 255, 255, 0.8); /* Semi-transparent background for readability */
+        }
+
+        .question {
+            margin-bottom: 20px;
+        }
+
+        .question p {
+            font-size: 18px;
+        }
+
+        .question input[type="radio"] {
+            margin-right: 10px;
+        }
+
+        #submitAnswers, #nextLevel {
+            padding: 10px 20px;
+            background-color: yellow;
+            color: #000;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        #submitAnswers:hover, #nextLevel:hover {
+            background-color: #f0c040;
+        }
+
+        #finalScore {
+            font-size: 30px;
+            color: #9C05C7;
+            margin-top: 20px;
+            font-weight: bold;
+        }
+
+        #levelTitle {
+            text-align: center;
+            font-size: 24px;
+            margin-top: 20px;
+            font-weight: bold;
+        }
+
+        #levelScore {
+            font-size: 18px;
+            color: #333;
+            margin-top: 20px;
+        }
+
+        #resultContainer {
+            margin-top: 20px;
+            padding: 20px;
+            background-color: rgba(255, 255, 255, 0.8);
+            border: 1px solid #ccc;
+        }
+
+        .pagination {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .pagination button {
+            padding: 10px 15px;
+            margin: 5px;
+            background-color: #ddd;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        .pagination button.active {
+            background-color: yellow;
+            font-weight: bold;
+        }
+
+        .pagination button:hover {
+            background-color: #ccc;
+        }
+
+        .main-content {
+            flex: 1;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="banner">
+        <img src="C:/Users/prath/Downloads/Logo.jpg" alt="Logo"> <!-- Add the path to your logo image here -->
+        <h1>Welcome to Kids Maths Practice</h1>
+    </div>
+
+    <div class="container">
+        <div class="menu">
+            <button onclick="showMathQuiz()">Maths</button>
+            <button onclick="showEnglishQuiz()">English</button>
+        </div>
+
+        <div class="main-content">
+            <div id="levelTitle">Level 1</div>
+            <div id="quizContainer">
+                <div id="quiz"></div>
+            </div>
+            <button id="submitAnswers">Submit Answers</button>
+            <button id="nextLevel" style="display: none;">Next Level</button>
+            <div id="resultContainer">
+                <div id="levelScore"></div>
+                <div id="finalScore"></div>
+            </div>
+            <div class="pagination" id="pagination"></div>
+        </div>
+    </div>
+
+    <script>
+        const generateMathQuestion = (type, level) => {
+            let num1 = Math.floor(Math.random() * (level * 10)) + 1;
+            let num2;
+
+            if (type === 'subtraction') {
+                num2 = Math.floor(Math.random() * (num1 + 1));
+            } else if (type === 'division') {
+                num2 = Math.floor(Math.random() * (level * 10)) + 1;
+                num1 = num2 * (Math.floor(Math.random() * (level * 10)) + 1); // Ensure num1 is a multiple of num2
+            } else if (type === 'comparison') {
+                // Generate two random expressions for comparison
+                num1 = Math.floor(Math.random() * (level * 10)) + 1;
+                num2 = Math.floor(Math.random() * (level * 10)) + 1;
+            } else {
+                num2 = Math.floor(Math.random() * (level * 10)) + 1;
+            }
+
+            let question, correctAnswer, answers;
+            
+            switch(type) {
+                case 'addition':
+                    question = `If you have ${num1} apples and you get ${num2} more, how many apples do you have in total?`;
+                    correctAnswer = (num1 + num2).toString();
+                    answers = [
+                        correctAnswer,
+                        Math.max((num1 + num2) - Math.floor(Math.random() * 3) - 1, 0).toString(),
+                        (num1 + num2 + Math.floor(Math.random() * 3) + 1).toString()
+                    ].sort(() => 0.5 - Math.random());
+                    break;
+                case 'subtraction':
+                    question = `You have ${num1} oranges and you give away ${num2}, how many oranges do you have left?`;
+                    correctAnswer = (num1 - num2).toString();
+                    answers = [
+                        correctAnswer,
+                        Math.max((num1 - num2) - Math.floor(Math.random() * 3) - 1, 0).toString(),
+                        (num1 - num2 + Math.floor(Math.random() * 3) + 1).toString()
+                    ].sort(() => 0.5 - Math.random());
+                    break;
+                case 'multiplication':
+                    question = `If a box contains ${num1} chocolates and you have ${num2} such boxes, how many chocolates do you have in total?`;
+                    correctAnswer = (num1 * num2).toString();
+                    answers = [
+                        correctAnswer,
+                        Math.max((num1 * num2) - Math.floor(Math.random() * 3) - 1, 0).toString(),
+                        (num1 * num2 + Math.floor(Math.random() * 3) + 1).toString()
+                    ].sort(() => 0.5 - Math.random());
+                    break;
+                case 'division':
+                    question = `If you have ${num1} candies and you divide them equally into ${num2} bags, how many candies are in each bag?`;
+                    correctAnswer = (num1 / num2).toString();
+                    answers = [
+                        correctAnswer,
+                        Math.max((num1 / num2) - Math.floor(Math.random() * 3) - 1, 0).toString(),
+                        (num1 / num2 + Math.floor(Math.random() * 3) + 1).toString()
+                    ].sort(() => 0.5 - Math.random());
+                    break;
+                case 'comparison':
+                    question = `Estimate. Which sign makes the statement true?\n${num1} ? ${num2}`;
+                    let options = ['<', '>', '='];
+                    let comparisonResult;
+                    if (num1 < num2) comparisonResult = '<';
+                    else if (num1 > num2) comparisonResult = '>';
+                    else comparisonResult = '=';
+                    correctAnswer = comparisonResult;
+                    answers = options;
+                    break;
+            }
+            
+            return {
+                question: question,
+                answers: answers.map(String), // Convert all answers to strings
+                correct: correctAnswer
+            };
+        };
+
+        const generateEnglishQuestion = (level) => {
+            const questions = [
+                { question: "What is the synonym of 'happy'?", answers: ["Sad", "Joyful", "Angry"], correct: "Joyful" },
+                { question: "What is the antonym of 'cold'?", answers: ["Hot", "Warm", "Cool"], correct: "Hot" },
+                // Add more English questions here
+            ];
+
+            return questions[Math.floor(Math.random() * questions.length)];
+        };
+
+        let currentLevel = 1;
+        const totalLevels = 10; // Reduced to 10 levels
+        const questionsPerLevel = 10;
+        let score = 0;
+        let currentSubject = 'math';
+
+        let mathQuestions = {};
+        let englishQuestions = {};
+
+        const generateAllQuestions = () => {
+            for (let level = 1; level <= totalLevels; level++) {
+                mathQuestions[level] = [];
+                for (let i = 0; i < questionsPerLevel; i++) {
+                    let type = ['addition', 'subtraction', 'multiplication', 'division', 'comparison'][Math.floor(Math.random() * 5)];
+                    mathQuestions[level].push(generateMathQuestion(type, level));
+                }
+            }
+
+            for (let level = 1; level <= totalLevels; level++) {
+                englishQuestions[level] = [];
+                for (let i = 0; i < questionsPerLevel; i++) {
+                    englishQuestions[level].push(generateEnglishQuestion(level));
+                }
+            }
+        };
+
+        const quizContainer = document.getElementById('quiz');
+        const levelTitle = document.getElementById('levelTitle');
+        const levelScore = document.getElementById('levelScore');
+        const finalScore = document.getElementById('finalScore');
+        const submitAnswersButton = document.getElementById('submitAnswers');
+        const nextLevelButton = document.getElementById('nextLevel');
+        const paginationContainer = document.getElementById('pagination');
+
+        const displayQuestions = (level) => {
+            quizContainer.innerHTML = '';
+            levelTitle.innerText = `Level ${level}`;
+            levelScore.innerText = '';
+            finalScore.innerText = '';
+
+            const levelQuestions = currentSubject === 'math' 
+                ? mathQuestions[level]
+                : englishQuestions[level];
+
+            levelQuestions.forEach((q, index) => {
+                const questionDiv = document.createElement('div');
+                questionDiv.className = 'question';
+                const questionP = document.createElement('p');
+                questionP.innerText = `${index + 1}. ${q.question}`;
+                questionDiv.appendChild(questionP);
+
+                q.answers.forEach(answer => {
+                    const label = document.createElement('label');
+                    const input = document.createElement('input');
+                    input.type = 'radio';
+                    input.name = `q${index + 1}`;
+                    input.value = answer;
+                    label.appendChild(input);
+                    label.appendChild(document.createTextNode(answer));
+                    questionDiv.appendChild(label);
+                    questionDiv.appendChild(document.createElement('br'));
+                });
+
+                quizContainer.appendChild(questionDiv);
+            });
+        };
+
+        const displayPagination = () => {
+            paginationContainer.innerHTML = '';
+            for (let i = 1; i <= totalLevels; i++) {
+                const button = document.createElement('button');
+                button.innerText = i;
+                button.classList.add('pagination-button');
+                if (i === currentLevel) {
+                    button.classList.add('active');
+                }
+                button.addEventListener('click', () => {
+                    currentLevel = i;
+                    displayQuestions(currentLevel);
+                    updatePagination();
+                    submitAnswersButton.style.display = 'block';
+                    nextLevelButton.style.display = 'none';
+                });
+                paginationContainer.appendChild(button);
+            }
+        };
+
+        const updatePagination = () => {
+            const buttons = document.querySelectorAll('.pagination-button');
+            buttons.forEach((button, index) => {
+                if (index + 1 === currentLevel) {
+                    button.classList.add('active');
+                } else {
+                    button.classList.remove('active');
+                }
+            });
+        };
+
+        const showMathQuiz = () => {
+            currentSubject = 'math';
+            displayQuestions(currentLevel);
+            displayPagination();
+        };
+
+        const showEnglishQuiz = () => {
+            currentSubject = 'english';
+            displayQuestions(currentLevel);
+            displayPagination();
+        };
+
+        generateAllQuestions();
+        displayQuestions(currentLevel);
+        displayPagination();
+
+        submitAnswersButton.addEventListener('click', function() {
+            let levelScoreCount = 0;
+            const levelQuestions = currentSubject === 'math'
+                ? mathQuestions[currentLevel]
+                : englishQuestions[currentLevel];
+            const incorrectAnswers = [];
+
+            levelQuestions.forEach((q, index) => {
+                const userAnswer = document.querySelector(`input[name="q${index + 1}"]:checked`);
+                if (userAnswer && userAnswer.value === q.correct) {
+                    levelScoreCount++;
+                    score++;
+                } else {
+                    incorrectAnswers.push({
+                        question: q.question,
+                        correct: q.correct,
+                        selected: userAnswer ? userAnswer.value : 'No answer'
+                    });
+                }
+            });
+
+            let resultMessage = `Level ${currentLevel} Score: ${levelScoreCount}/${questionsPerLevel}\n`;
+            if (incorrectAnswers.length > 0) {
+                resultMessage += 'Incorrect Answers:\n';
+                incorrectAnswers.forEach((ans, idx) => {
+                    resultMessage += `${idx + 1}. Question: ${ans.question}\n   Correct Answer: ${ans.correct}\n   Your Answer: ${ans.selected}\n\n`;
+                });
+            }
+
+            levelScore.innerText = resultMessage;
+
+            submitAnswersButton.style.display = 'none';
+            nextLevelButton.style.display = 'block';
+        });
+
+        nextLevelButton.addEventListener('click', function() {
+            if (currentLevel < totalLevels) {
+                currentLevel++;
+                displayQuestions(currentLevel);
+                updatePagination();
+                submitAnswersButton.style.display = 'block';
+                nextLevelButton.style.display = 'none';
+            } else {
+                finalScore.innerText = `Your final score is: ${score} out of ${totalLevels * questionsPerLevel}`;
+            }
+        });
+    </script>
+</body>
+</html>
