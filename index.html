@@ -7,7 +7,7 @@
         body {
             font-family: Arial, sans-serif;
             margin: 20px;
-            background-image: url('/grid5.png'); /* Add the path to your image here */
+            background-image: url('/grid5.png'); /* Relative path to your image */
             background-size: cover; /* Ensure the image covers the entire background */
             background-position: center; /* Center the image */
             background-repeat: no-repeat; /* Prevent the image from repeating */
@@ -151,7 +151,7 @@
 <body>
 
     <div class="banner">
-        <img src="/Logo.jpg" alt="Logo"> <!-- Add the path to your logo image here -->
+        <img src="/Logo.jpg" alt="Logo"> <!-- Relative path to your logo image -->
         <h1>Welcome to Kids Maths Practice</h1>
     </div>
 
@@ -263,7 +263,7 @@
         };
 
         let currentLevel = 1;
-        const totalLevels = 10; // Reduced to 10 levels
+        const totalLevels = 20; // Increased to 20 levels
         const questionsPerLevel = 10;
         let score = 0;
         let currentSubject = 'math';
