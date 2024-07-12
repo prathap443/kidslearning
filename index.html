@@ -1,18 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Math Quiz</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Subject Specific Quiz</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             margin: 20px;
-            background-image: url('/grid5.png'); /* Relative path to your image */
-            background-size: cover; /* Ensure the image covers the entire background */
-            background-position: center; /* Center the image */
-            background-repeat: no-repeat; /* Prevent the image from repeating */
+            background-image: url('C:/Users/prath/Downloads/grid5.png');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
         }
-
         .banner {
             background-color: orange;
             padding: 20px;
@@ -21,30 +21,20 @@
             justify-content: center;
             position: relative;
         }
-
         .banner img {
             height: 50px;
-            position: absolute;
-            left: 20px;
+            margin-right: 20px;
         }
-
         .banner h1 {
             margin: 0;
             color: red;
             text-align: center;
         }
-
-        .container {
-            display: flex;
-            margin-top: 20px;
-        }
-
         .menu {
             display: flex;
             flex-direction: column;
-            margin-right: 20px; /* Add some space between the menu and main content */
+            margin-top: 20px;
         }
-
         .menu button {
             padding: 10px 20px;
             background-color: yellow;
@@ -54,31 +44,26 @@
             cursor: pointer;
             margin-bottom: 10px;
         }
-
         .menu button:hover {
             background-color: #f0c040;
         }
-
         #quizContainer {
             max-height: 600px;
             overflow-y: auto;
             border: 1px solid #ccc;
             padding: 20px;
-            background-color: rgba(255, 255, 255, 0.8); /* Semi-transparent background for readability */
+            background-color: rgba(255, 255, 255, 0.8);
+            margin-top: 20px;
         }
-
         .question {
             margin-bottom: 20px;
         }
-
         .question p {
             font-size: 18px;
         }
-
         .question input[type="radio"] {
             margin-right: 10px;
         }
-
         #submitAnswers, #nextLevel {
             padding: 10px 20px;
             background-color: yellow;
@@ -88,43 +73,36 @@
             cursor: pointer;
             margin-top: 20px;
         }
-
         #submitAnswers:hover, #nextLevel:hover {
             background-color: #f0c040;
         }
-
         #finalScore {
             font-size: 30px;
             color: #9C05C7;
             margin-top: 20px;
             font-weight: bold;
         }
-
         #levelTitle {
             text-align: center;
             font-size: 24px;
             margin-top: 20px;
             font-weight: bold;
         }
-
         #levelScore {
             font-size: 18px;
             color: #333;
             margin-top: 20px;
         }
-
         #resultContainer {
             margin-top: 20px;
             padding: 20px;
             background-color: rgba(255, 255, 255, 0.8);
             border: 1px solid #ccc;
         }
-
         .pagination {
             text-align: center;
             margin-top: 20px;
         }
-
         .pagination button {
             padding: 10px 15px;
             margin: 5px;
@@ -133,16 +111,16 @@
             cursor: pointer;
             border-radius: 5px;
         }
-
         .pagination button.active {
             background-color: yellow;
             font-weight: bold;
         }
-
         .pagination button:hover {
             background-color: #ccc;
         }
-
+        .container {
+            display: flex;
+        }
         .main-content {
             flex: 1;
         }
@@ -151,18 +129,18 @@
 <body>
 
     <div class="banner">
-        <img src="/Logo.jpg" alt="Logo"> <!-- Relative path to your logo image -->
-        <h1>Welcome to Kids Maths Practice</h1>
+        <img src="C:/Users/prath/Downloads/Logo.jpg" alt="Logo">
+        <h1>Welcome to Subject-Specific Practice Quizzes</h1>
     </div>
 
     <div class="container">
         <div class="menu">
-            <button onclick="showMathQuiz()">Maths</button>
-            <button onclick="showEnglishQuiz()">English</button>
+            <button onclick="showQuiz('math')">Maths</button>
+            <button onclick="showQuiz('english')">English</button>
         </div>
 
         <div class="main-content">
-            <div id="levelTitle">Level 1</div>
+            <div id="levelTitle">Level 1 - Maths</div>
             <div id="quizContainer">
                 <div id="quiz"></div>
             </div>
@@ -177,116 +155,159 @@
     </div>
 
     <script>
-        const generateMathQuestion = (type, level) => {
-            let num1 = Math.floor(Math.random() * (level * 10)) + 1;
-            let num2;
+        const totalLevels = 20;
+        const questionsPerLevel = 10;
+        let currentLevel = 1;
+        let currentSubject = 'math';
+        let score = 0;
 
-            if (type === 'subtraction') {
-                num2 = Math.floor(Math.random() * (num1 + 1));
+        const mathQuestions = [];
+        const englishQuestions = [];
+
+        // English question pool
+        const englishQuestionPool = [
+            { question: "What is the synonym of 'happy'?", answers: ["Sad", "Joyful", "Angry"], correct: "Joyful" },
+            { question: "What is the antonym of 'cold'?", answers: ["Hot", "Warm", "Cool"], correct: "Hot" },
+            { question: "Complete the following sentence: 'The quick brown ___ jumps over the lazy dog.'", answers: ["fox", "cat", "rabbit"], correct: "fox" },
+            { question: "Which word is a noun in this sentence: 'She quickly adjusted the bright red hat.'", answers: ["quickly", "adjusted", "hat"], correct: "hat" },
+            { question: "Identify the verb in this sentence: 'The children play at the park.'", answers: ["children", "play", "park"], correct: "play" },
+            { question: "Choose the correct spelling.", answers: ["Recieve", "Receive", "Recive"], correct: "Receive" },
+            { question: "What is a synonym for 'beautiful'?", answers: ["Ugly", "Gorgeous", "Plain"], correct: "Gorgeous" },
+            { question: "Which word means the same as 'difficult'?", answers: ["Hard", "Easy", "Simple"], correct: "Hard" },
+            { question: "What is the opposite of 'ancient'?", answers: ["Old", "Modern", "Past"], correct: "Modern" },
+            { question: "Which word is incorrectly spelled?", answers: ["Environment", "Management", "Goverment"], correct: "Goverment" },
+            { "question": "What is the opposite of 'doubt'?", "answers": ["Certainty", "Skepticism", "Question"], "correct": "Certainty" },
+            { "question": "What is the opposite of 'frequent'?", "answers": ["Rare", "Often", "Common"], "correct": "Rare" },
+            { "question": "What is the opposite of 'brave'?", "answers": ["Cowardly", "Bold", "Fearless"], "correct": "Cowardly" },
+            { "question": "What is the opposite of 'complex'?", "answers": ["Simple", "Complicated", "Intricate"], "correct": "Simple" },
+            { "question": "What is the opposite of 'success'?", "answers": ["Failure", "Victory", "Triumph"], "correct": "Failure" },
+            { "question": "What is the opposite of 'include'?", "answers": ["Exclude", "Involve", "Contain"], "correct": "Exclude" },
+            { "question": "What is the opposite of 'liberate'?", "answers": ["Imprison", "Free", "Release"], "correct": "Imprison" },
+            { "question": "What is the opposite of 'fiction'?", "answers": ["Nonfiction", "Novel", "Story"], "correct": "Nonfiction" },
+            { "question": "What is the opposite of 'private'?", "answers": ["Public", "Secret", "Personal"], "correct": "Public" },
+            { "question": "What is the opposite of 'optimistic'?", "answers": ["Pessimistic", "Hopeful", "Positive"], "correct": "Pessimistic" },
+            { "question": "What is the opposite of 'horizontal'?", "answers": ["Vertical", "Flat", "Level"], "correct": "Vertical" },
+            { "question": "What is the opposite of 'advance'?", "answers": ["Retreat", "Progress", "Move"], "correct": "Retreat" },
+            { "question": "What is the opposite of 'create'?", "answers": ["Destroy", "Build", "Invent"], "correct": "Destroy" },
+            { "question": "What is the opposite of 'generous'?", "answers": ["Stingy", "Kind", "Giving"], "correct": "Stingy" },
+            { "question": "What is the opposite of 'artificial'?", "answers": ["Natural", "Synthetic", "Man-made"], "correct": "Natural" },
+            { "question": "What is the opposite of 'arrival'?", "answers": ["Departure", "Coming", "Entrance"], "correct": "Departure" },
+            { "question": "What is the opposite of 'peaceful'?", "answers": ["Chaotic", "Calm", "Tranquil"], "correct": "Chaotic" },
+            { "question": "What is the opposite of 'unique'?", "answers": ["Common", "Special", "Distinct"], "correct": "Common" },
+            { "question": "What is the opposite of 'guilty'?", "answers": ["Innocent", "Blameworthy", "Culpable"], "correct": "Innocent" },
+            { "question": "What is the opposite of 'encourage'?", "answers": ["Discourage", "Support", "Inspire"], "correct": "Discourage" },
+            { question: "What is the synonym of 'happy'?", answers: ["Sad", "Joyful", "Angry"], correct: "Joyful" },
+            { question: "What is the antonym of 'cold'?", answers: ["Hot", "Warm", "Cool"], correct: "Hot" },
+            { question: "Complete the following sentence: 'The quick brown ___ jumps over the lazy dog.'", answers: ["fox", "cat", "rabbit"], correct: "fox" },
+            { question: "Which word is a noun in this sentence: 'She quickly adjusted the bright red hat.'", answers: ["quickly", "adjusted", "hat"], correct: "hat" },
+            { question: "Identify the verb in this sentence: 'The children play at the park.'", answers: ["children", "play", "park"], correct: "play" },
+            { question: "Choose the correct spelling.", answers: ["Recieve", "Receive", "Recive"], correct: "Receive" },
+            { question: "What is a synonym for 'beautiful'?", answers: ["Ugly", "Gorgeous", "Plain"], correct: "Gorgeous" },
+            { question: "Which word means the same as 'difficult'?", answers: ["Hard", "Easy", "Simple"], correct: "Hard" },
+            { question: "What is the opposite of 'ancient'?", answers: ["Old", "Modern", "Past"], correct: "Modern" },
+            { question: "Which word is incorrectly spelled?", answers: ["Environment", "Management", "Goverment"], correct: "Goverment" },
+            { "question": "What is the opposite of 'doubt'?", "answers": ["Certainty", "Skepticism", "Question"], "correct": "Certainty" },
+            { "question": "What is the opposite of 'frequent'?", "answers": ["Rare", "Often", "Common"], "correct": "Rare" },
+            { "question": "What is the opposite of 'brave'?", "answers": ["Cowardly", "Bold", "Fearless"], "correct": "Cowardly" },
+            { "question": "What is the opposite of 'complex'?", "answers": ["Simple", "Complicated", "Intricate"], "correct": "Simple" },
+            { "question": "What is the opposite of 'success'?", "answers": ["Failure", "Victory", "Triumph"], "correct": "Failure" },
+            { "question": "What is the opposite of 'include'?", "answers": ["Exclude", "Involve", "Contain"], "correct": "Exclude" },
+            { "question": "What is the opposite of 'liberate'?", "answers": ["Imprison", "Free", "Release"], "correct": "Imprison" },
+            { "question": "What is the opposite of 'fiction'?", "answers": ["Nonfiction", "Novel", "Story"], "correct": "Nonfiction" },
+            { "question": "What is the opposite of 'private'?", "answers": ["Public", "Secret", "Personal"], "correct": "Public" },
+            { "question": "What is the opposite of 'optimistic'?", "answers": ["Pessimistic", "Hopeful", "Positive"], "correct": "Pessimistic" },
+            { "question": "What is the opposite of 'horizontal'?", "answers": ["Vertical", "Flat", "Level"], "correct": "Vertical" },
+            { "question": "What is the opposite of 'advance'?", "answers": ["Retreat", "Progress", "Move"], "correct": "Retreat" },
+            { "question": "What is the opposite of 'create'?", "answers": ["Destroy", "Build", "Invent"], "correct": "Destroy" },
+            { "question": "What is the opposite of 'generous'?", "answers": ["Stingy", "Kind", "Giving"], "correct": "Stingy" },
+            { "question": "What is the opposite of 'artificial'?", "answers": ["Natural", "Synthetic", "Man-made"], "correct": "Natural" },
+            { "question": "What is the opposite of 'arrival'?", "answers": ["Departure", "Coming", "Entrance"], "correct": "Departure" },
+            { "question": "What is the opposite of 'peaceful'?", "answers": ["Chaotic", "Calm", "Tranquil"], "correct": "Chaotic" },
+            { "question": "What is the opposite of 'unique'?", "answers": ["Common", "Special", "Distinct"], "correct": "Common" },
+            { "question": "What is the opposite of 'guilty'?", "answers": ["Innocent", "Blameworthy", "Culpable"], "correct": "Innocent" },
+            { "question": "What is the opposite of 'encourage'?", "answers": ["Discourage", "Support", "Inspire"], "correct": "Discourage" },
+	    { "question": "Complete the following sentence: 'The quick brown ___ jumps over the lazy dog.'", "answers": ["fox", "cat", "rabbit"], "correct": "fox" },
+            { "question": "Complete the following sentence: 'A penny saved is a penny ___.'", "answers": ["earned", "spent", "lost"], "correct": "earned" },
+            { "question": "Complete the following sentence: 'Actions speak louder than ___.'", "answers": ["words", "thoughts", "whispers"], "correct": "words" },
+            { "question": "Complete the following sentence: 'Birds of a feather ___ together.'", "answers": ["flock", "fly", "stay"], "correct": "flock" },
+            { "question": "Complete the following sentence: 'A picture is worth a thousand ___.'", "answers": ["words", "views", "emotions"], "correct": "words" },
+            { "question": "Complete the following sentence: 'When in Rome, do as the Romans ___.'", "answers": ["do", "say", "like"], "correct": "do" },
+            { "question": "Complete the following sentence: 'All that glitters is not ___.'", "answers": ["gold", "silver", "diamond"], "correct": "gold" },
+            { "question": "Complete the following sentence: 'Better late than ___.'", "answers": ["never", "early", "soon"], "correct": "never" },
+            { "question": "Complete the following sentence: 'Don't count your chickens before they ___.'", "answers": ["hatch", "fly", "grow"], "correct": "hatch" },
+            { "question": "Complete the following sentence: 'Every cloud has a ___ lining.'", "answers": ["silver", "golden", "bright"], "correct": "silver" },
+            { "question": "Complete the following sentence: 'Fortune favors the ___.'", "answers": ["brave", "bold", "smart"], "correct": "bold" },
+            { "question": "Complete the following sentence: 'Honesty is the best ___.'", "answers": ["policy", "practice", "habit"], "correct": "policy" },
+            { "question": "Complete the following sentence: 'Laughter is the best ___.'", "answers": ["medicine", "remedy", "cure"], "correct": "medicine" },
+            { "question": "Complete the following sentence: 'Look before you ___.'", "answers": ["leap", "run", "act"], "correct": "leap" },
+            { "question": "Complete the following sentence: 'Practice makes ___.'", "answers": ["perfect", "progress", "permanent"], "correct": "perfect" },
+            { "question": "Complete the following sentence: 'The early bird catches the ___.'", "answers": ["worm", "bug", "seed"], "correct": "worm" },
+            { "question": "Complete the following sentence: 'The pen is mightier than the ___.'", "answers": ["sword", "weapon", "shield"], "correct": "sword" },
+            { "question": "Complete the following sentence: 'Time is ___.'", "answers": ["money", "gold", "precious"], "correct": "money" },
+            { "question": "Complete the following sentence: 'Too many cooks spoil the ___.'", "answers": ["broth", "soup", "stew"], "correct": "broth" },
+            { "question": "Complete the following sentence: 'Two heads are better than ___.'", "answers": ["one", "three", "none"], "correct": "one" },
+            { "question": "Complete the following sentence: 'When the going gets tough, the tough get ___.'", "answers": ["going", "strong", "smart"], "correct": "going" }
+
+
+        ];
+
+        const generateMathQuestion = (level) => {
+            const types = ['addition', 'subtraction', 'multiplication', 'division'];
+            const type = types[Math.floor(Math.random() * types.length)];
+            let num1 = Math.floor(Math.random() * (level * 10)) + 1;
+            let num2 = Math.floor(Math.random() * (level * 10)) + 1;
+
+            if (type === 'subtraction' && num2 > num1) {
+                let temp = num1;
+                num1 = num2;
+                num2 = temp;
             } else if (type === 'division') {
-                num2 = Math.floor(Math.random() * (level * 10)) + 1;
-                num1 = num2 * (Math.floor(Math.random() * (level * 10)) + 1); // Ensure num1 is a multiple of num2
-            } else if (type === 'comparison') {
-                // Generate two random expressions for comparison
-                num1 = Math.floor(Math.random() * (level * 10)) + 1;
-                num2 = Math.floor(Math.random() * (level * 10)) + 1;
-            } else {
-                num2 = Math.floor(Math.random() * (level * 10)) + 1;
+                num1 = num2 * (Math.floor(Math.random() * (level * 10)) + 1);
             }
 
-            let question, correctAnswer, answers;
-            
+            let question, correctAnswer;
+
             switch(type) {
                 case 'addition':
                     question = `If you have ${num1} apples and you get ${num2} more, how many apples do you have in total?`;
                     correctAnswer = (num1 + num2).toString();
-                    answers = [
-                        correctAnswer,
-                        Math.max((num1 + num2) - Math.floor(Math.random() * 3) - 1, 0).toString(),
-                        (num1 + num2 + Math.floor(Math.random() * 3) + 1).toString()
-                    ].sort(() => 0.5 - Math.random());
                     break;
                 case 'subtraction':
                     question = `You have ${num1} oranges and you give away ${num2}, how many oranges do you have left?`;
                     correctAnswer = (num1 - num2).toString();
-                    answers = [
-                        correctAnswer,
-                        Math.max((num1 - num2) - Math.floor(Math.random() * 3) - 1, 0).toString(),
-                        (num1 - num2 + Math.floor(Math.random() * 3) + 1).toString()
-                    ].sort(() => 0.5 - Math.random());
                     break;
                 case 'multiplication':
                     question = `If a box contains ${num1} chocolates and you have ${num2} such boxes, how many chocolates do you have in total?`;
                     correctAnswer = (num1 * num2).toString();
-                    answers = [
-                        correctAnswer,
-                        Math.max((num1 * num2) - Math.floor(Math.random() * 3) - 1, 0).toString(),
-                        (num1 * num2 + Math.floor(Math.random() * 3) + 1).toString()
-                    ].sort(() => 0.5 - Math.random());
                     break;
                 case 'division':
                     question = `If you have ${num1} candies and you divide them equally into ${num2} bags, how many candies are in each bag?`;
                     correctAnswer = (num1 / num2).toString();
-                    answers = [
-                        correctAnswer,
-                        Math.max((num1 / num2) - Math.floor(Math.random() * 3) - 1, 0).toString(),
-                        (num1 / num2 + Math.floor(Math.random() * 3) + 1).toString()
-                    ].sort(() => 0.5 - Math.random());
-                    break;
-                case 'comparison':
-                    question = `Estimate. Which sign makes the statement true?\n${num1} ? ${num2}`;
-                    let options = ['<', '>', '='];
-                    let comparisonResult;
-                    if (num1 < num2) comparisonResult = '<';
-                    else if (num1 > num2) comparisonResult = '>';
-                    else comparisonResult = '=';
-                    correctAnswer = comparisonResult;
-                    answers = options;
                     break;
             }
-            
+
+            let answers = [
+                parseInt(correctAnswer),
+                Math.max(parseInt(correctAnswer) - Math.floor(Math.random() * 3) - 1, 0),
+                parseInt(correctAnswer) + Math.floor(Math.random() * 3) + 1
+            ].sort(() => 0.5 - Math.random()); // Shuffle answers
+
             return {
                 question: question,
-                answers: answers.map(String), // Convert all answers to strings
+                answers: answers.map(String),
                 correct: correctAnswer
             };
         };
 
-        const generateEnglishQuestion = (level) => {
-            const questions = [
-                { question: "What is the synonym of 'happy'?", answers: ["Sad", "Joyful", "Angry"], correct: "Joyful" },
-                { question: "What is the antonym of 'cold'?", answers: ["Hot", "Warm", "Cool"], correct: "Hot" },
-                // Add more English questions here
-            ];
-
-            return questions[Math.floor(Math.random() * questions.length)];
-        };
-
-        let currentLevel = 1;
-        const totalLevels = 20; // Increased to 20 levels
-        const questionsPerLevel = 10;
-        let score = 0;
-        let currentSubject = 'math';
-
-        let mathQuestions = {};
-        let englishQuestions = {};
-
-        const generateAllQuestions = () => {
-            for (let level = 1; level <= totalLevels; level++) {
-                mathQuestions[level] = [];
-                for (let i = 0; i < questionsPerLevel; i++) {
-                    let type = ['addition', 'subtraction', 'multiplication', 'division', 'comparison'][Math.floor(Math.random() * 5)];
-                    mathQuestions[level].push(generateMathQuestion(type, level));
-                }
+        for (let level = 1; level <= totalLevels; level++) {
+            for (let i = 0; i < questionsPerLevel; i++) {
+                mathQuestions.push(generateMathQuestion(level));
+                englishQuestions.push(...englishQuestionPool.map(question => ({
+                    ...question,
+                    answers: [...question.answers].sort(() => Math.random() - 0.5)
+                })));
             }
-
-            for (let level = 1; level <= totalLevels; level++) {
-                englishQuestions[level] = [];
-                for (let i = 0; i < questionsPerLevel; i++) {
-                    englishQuestions[level].push(generateEnglishQuestion(level));
-                }
-            }
-        };
+        }
 
         const quizContainer = document.getElementById('quiz');
         const levelTitle = document.getElementById('levelTitle');
@@ -296,15 +317,14 @@
         const nextLevelButton = document.getElementById('nextLevel');
         const paginationContainer = document.getElementById('pagination');
 
-        const displayQuestions = (level) => {
+        const displayQuestions = (level, subject) => {
             quizContainer.innerHTML = '';
-            levelTitle.innerText = `Level ${level}`;
+            levelTitle.innerText = `Level ${level} - ${subject.charAt(0).toUpperCase() + subject.slice(1)}`;
             levelScore.innerText = '';
             finalScore.innerText = '';
 
-            const levelQuestions = currentSubject === 'math' 
-                ? mathQuestions[level]
-                : englishQuestions[level];
+            const startIndex = (level - 1) * questionsPerLevel;
+            const levelQuestions = subject === 'math' ? mathQuestions.slice(startIndex, startIndex + questionsPerLevel) : englishQuestions.slice(startIndex, startIndex + questionsPerLevel);
 
             levelQuestions.forEach((q, index) => {
                 const questionDiv = document.createElement('div');
@@ -329,7 +349,7 @@
             });
         };
 
-        const displayPagination = () => {
+        const displayPagination = (subject) => {
             paginationContainer.innerHTML = '';
             for (let i = 1; i <= totalLevels; i++) {
                 const button = document.createElement('button');
@@ -340,7 +360,7 @@
                 }
                 button.addEventListener('click', () => {
                     currentLevel = i;
-                    displayQuestions(currentLevel);
+                    displayQuestions(currentLevel, subject);
                     updatePagination();
                     submitAnswersButton.style.display = 'block';
                     nextLevelButton.style.display = 'none';
@@ -360,27 +380,18 @@
             });
         };
 
-        const showMathQuiz = () => {
-            currentSubject = 'math';
-            displayQuestions(currentLevel);
-            displayPagination();
+        const showQuiz = (subject) => {
+            currentSubject = subject;
+            displayQuestions(currentLevel, subject);
+            displayPagination(subject);
         };
 
-        const showEnglishQuiz = () => {
-            currentSubject = 'english';
-            displayQuestions(currentLevel);
-            displayPagination();
-        };
-
-        generateAllQuestions();
-        displayQuestions(currentLevel);
-        displayPagination();
+        showQuiz('math'); // Default to Math on page load
 
         submitAnswersButton.addEventListener('click', function() {
             let levelScoreCount = 0;
-            const levelQuestions = currentSubject === 'math'
-                ? mathQuestions[currentLevel]
-                : englishQuestions[currentLevel];
+            const startIndex = (currentLevel - 1) * questionsPerLevel;
+            const levelQuestions = currentSubject === 'math' ? mathQuestions.slice(startIndex, startIndex + questionsPerLevel) : englishQuestions.slice(startIndex, startIndex + questionsPerLevel);
             const incorrectAnswers = [];
 
             levelQuestions.forEach((q, index) => {
@@ -414,7 +425,7 @@
         nextLevelButton.addEventListener('click', function() {
             if (currentLevel < totalLevels) {
                 currentLevel++;
-                displayQuestions(currentLevel);
+                displayQuestions(currentLevel, currentSubject);
                 updatePagination();
                 submitAnswersButton.style.display = 'block';
                 nextLevelButton.style.display = 'none';
